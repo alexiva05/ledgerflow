@@ -15,6 +15,12 @@ type accountRepo struct {
 	pool *pgxpool.Pool
 }
 
+func NewAccountRepo(pool *pgxpool.Pool) domain.AccountRepository {
+	return &accountRepo{
+		pool: pool,
+	}
+}
+
 func (a *accountRepo) Create(ctx context.Context, account domain.Account) error {
 
 	q := `

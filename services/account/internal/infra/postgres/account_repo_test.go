@@ -14,7 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/jackc/pgx/v5/stdlib" // регистрирует драйвер "pgx"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
@@ -25,49 +25,7 @@ import (
 
 var testPool *pgxpool.Pool
 
-// func setupTestDB(t *testing.T) *pgxpool.Pool {
-
-// 	t.Helper()
-// 	ctx := context.Background()
-
-// 	container, err := tcpostgres.Run(ctx, "postgres:16",
-// 		tcpostgres.WithDatabase("testdb"),
-// 		tcpostgres.WithUsername("test"),
-// 		tcpostgres.WithPassword("test"),
-// 		testcontainers.WithWaitStrategy(
-// 			wait.ForLog("database system is ready to accept connections").WithOccurrence(2),
-// 		),
-// 	)
-// 	require.NoError(t, err)
-
-// 	t.Cleanup(func() {
-// 		container.Terminate(ctx)
-// 	})
-
-// 	connStr, err := container.ConnectionString(ctx, "sslmode=disable")
-// 	require.NoError(t, err)
-
-// 	db, err := sql.Open("pgx", connStr)
-// 	require.NoError(t, err)
-// 	t.Cleanup(func() {
-// 		db.Close()
-// 	})
-
-// 	err = goose.SetDialect("postgres")
-// 	require.NoError(t, err)
-
-// 	err = goose.Up(db, "../../../migrations")
-// 	require.NoError(t, err)
-
-// 	pool, err := pgxpool.New(ctx, connStr)
-// 	require.NoError(t, err)
-
-// 	return pool
-// }
-
 func TestAccountRepo_Create(t *testing.T) {
-	// pool := setupTestDB(t)
-	// repo := NewAccountRepo(pool)
 	repo := NewAccountRepo(testPool)
 	ctx := context.Background()
 
@@ -91,8 +49,6 @@ func TestAccountRepo_Create(t *testing.T) {
 }
 
 func TestAccountRepo_GetByID_NotFound(t *testing.T) {
-	// pool := setupTestDB(t)
-	// repo := NewAccountRepo(pool)
 	repo := NewAccountRepo(testPool)
 	ctx := context.Background()
 
@@ -101,8 +57,6 @@ func TestAccountRepo_GetByID_NotFound(t *testing.T) {
 }
 
 func TestAccountService_GetBalance(t *testing.T) {
-	// pool := setupTestDB(t)
-	// repo := NewAccountRepo(pool)
 	repo := NewAccountRepo(testPool)
 	ctx := context.Background()
 

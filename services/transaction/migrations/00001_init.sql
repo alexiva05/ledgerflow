@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TYPE transaction_status AS ENUM ('pending', 'completed', 'failed', 'canceled');
+CREATE TYPE transaction_status AS ENUM ('pending', 'completed', 'failed', 'cancelled');
 
 CREATE TABLE transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

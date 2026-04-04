@@ -8,20 +8,21 @@ import (
 )
 
 type TransactionStatus string
+
 const (
-	TransactionStatusPending TransactionStatus = "pending"
+	TransactionStatusPending   TransactionStatus = "pending"
 	TransactionStatusCompleted TransactionStatus = "completed"
-	TransactionStatusFailed TransactionStatus = "failed"
-	TransactionStatusCanclled TransactionStatus = "cancelled"
+	TransactionStatusFailed    TransactionStatus = "failed"
+	TransactionStatusCanclled  TransactionStatus = "cancelled"
 )
 
 type Transaction struct {
-	ID uuid.UUID
-	FromAccountID uuid.UUID
-	ToAccountID uuid.UUID
-	Amount decimal.Decimal
-	Currency string
-	Status TransactionStatus
-	CreatedAt time.Time
-	CompletedAt *time.Time
+	ID            uuid.UUID         `json:"id"`
+	FromAccountID uuid.UUID         `json:"from_account_id"`
+	ToAccountID   uuid.UUID         `json:"to_account_id"`
+	Amount        decimal.Decimal   `json:"amount"`
+	Currency      string            `json:"currency"`
+	Status        TransactionStatus `json:"status"`
+	CreatedAt     time.Time         `json:"created_at"`
+	CompletedAt   *time.Time        `json:"completed_at"`
 }

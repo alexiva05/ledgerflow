@@ -1,0 +1,27 @@
+# Binaries
+bin/
+dist/
+services/*/server
+services/*/cmd/server/server
+
+# Test binaries
+*.test
+*.out
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+vendor/

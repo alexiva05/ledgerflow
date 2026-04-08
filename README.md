@@ -31,10 +31,10 @@ Banking core — учебный production-ready микросервисный б
 
 | Сервис | Назначение | Статус |
 |---|---|---|
-| `account` | Double-entry ledger, балансы | В разработке |
-| `transaction` | Переводы, SAGA, idempotency | Domain layer |
+| `account` | Double-entry ledger, балансы | Готово |
+| `transaction` | Переводы, idempotency, outbox, gRPC | Готово |
+| `fraud` | Velocity check через Redis, Kafka consumer | В разработке |
 | `auth` | JWT, refresh tokens, RBAC | Planned |
-| `fraud` | Velocity check, ML-скоринг | Planned |
 | `notification` | Email / push / webhook | Planned |
 | `reporting` | Выписки, аналитика | Planned |
 | `audit` | Append-only signed log | Planned |
@@ -172,7 +172,7 @@ VAULT_ADDR=http://localhost:8200
 
 - [x] Фаза 1 — `pkg/` (logger, config, errors, tracing)
 - [x] Фаза 2 — Account service (domain, storage, HTTP, тесты)
-- [ ] Фаза 3 — Transaction service (idempotency, outbox, gRPC)
-- [ ] Фаза 4 — Event consumers (fraud, audit, notification)
+- [x] Фаза 3 — Transaction service (idempotency, outbox, gRPC, тесты)
+- [ ] Фаза 4 — Event consumers (fraud — в разработке, audit, notification)
 - [ ] Фаза 5 — Observability (Prometheus, OTel tracing, Grafana)
 - [ ] Фаза 6 — Production hardening (graceful shutdown, rate limiting, health checks, Helm)

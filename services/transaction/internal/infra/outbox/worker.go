@@ -11,14 +11,18 @@ import (
 	"go.uber.org/zap"
 )
 
+type KafkaProducer interface {
+	ProduceSync(ctx context.Context, rs ...*kgo.Record) kgo.ProduceResults
+}
+
 type Worker struct {
 	db       *pgxpool.Pool
-	kafka    *kgo.Client
+	kafka    KafkaProducer
 	interval time.Duration
 	logger   *zap.Logger
 }
 
-func NewWorker(db *pgxpool.Pool, kafka *kgo.Client, interval time.Duration, logger *zap.Logger) *Worker {
+func NewWorker(db *pgxpool.Pool, kafka KafkaProducer, interval time.Duration, logger *zap.Logger) *Worker {
 	return &Worker{
 		db:       db,
 		kafka:    kafka,

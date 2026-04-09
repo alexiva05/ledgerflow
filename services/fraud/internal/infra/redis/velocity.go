@@ -16,7 +16,7 @@ type velocityChecker struct {
 	threshold int64
 }
 
-func NewVelocityChecker(client *redis.Client, window time.Duration, threshold int64) domain.VelocityCheckerRepository {
+func NewVelocityChecker(client *redis.Client, window time.Duration, threshold int64) domain.VelocityChecker {
 	return &velocityChecker{
 		client: client,
 		window: window,

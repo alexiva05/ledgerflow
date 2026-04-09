@@ -7,6 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type VelocityCheckerRepository interface {
+type VelocityChecker interface {
 	Check(ctx context.Context, accountID uuid.UUID, txID uuid.UUID, at time.Time) (bool, error)
 }

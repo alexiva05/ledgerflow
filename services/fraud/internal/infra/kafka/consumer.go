@@ -11,16 +11,16 @@ import (
 )
 
 type Consumer struct {
-	client *kgo.Client
+	client  *kgo.Client
 	checker *app.FraudChecker
-	logger *zap.Logger
+	logger  *zap.Logger
 }
 
 func NewConsumer(client *kgo.Client, checker *app.FraudChecker, logger *zap.Logger) *Consumer {
 	return &Consumer{
-		client: client,
+		client:  client,
 		checker: checker,
-		logger: logger,
+		logger:  logger,
 	}
 }
 

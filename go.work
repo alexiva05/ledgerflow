@@ -7,4 +7,5 @@ use (
     ./proto/transaction
     ./services/fraud
     ./services/audit
+    ./services/notification
 )

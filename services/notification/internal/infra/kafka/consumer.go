@@ -3,8 +3,10 @@ package kafka
 import (
 	"context"
 	"encoding/json"
+	"ledgerflow/pkg/metrics"
 	"ledgerflow/services/notification/internal/app"
 	"ledgerflow/services/notification/internal/domain"
+	"time"
 
 	"github.com/twmb/franz-go/pkg/kgo"
 	"go.uber.org/zap"
@@ -38,18 +40,32 @@ func (c *Consumer) Run(ctx context.Context) {
 				if fetchTopic.Topic == string(domain.TransactionCompleted) || fetchTopic.Topic == string(domain.TransactionFailed) {
 					for _, partition := range fetchTopic.Partitions {
 						for _, record := range partition.Records {
-							var event domain.TransactionEvent
-							if err := json.Unmarshal(record.Value, &event); err != nil {
-								c.logger.Error("unmarshal json failed", zap.Error(err))
-								continue
-							}
-							if err := c.notification.Handle(ctx, event, fetchTopic.Topic); err != nil {
-								c.logger.Error("notification send failed", zap.Error(err), zap.String("topic", fetchTopic.Topic), zap.String("transaction_id", event.TransactionID.String()))
-							}
+							c.processRecord(ctx, fetchTopic.Topic, record)
 						}
 					}
 				}
 			}
 		}
+	}
+}
+
+func (c *Consumer) processRecord(ctx context.Context, topic string, record *kgo.Record) {
+	start := time.Now()
+	status := "success"
+	defer func() {
+		metrics.KafkaMessagesTotal.WithLabelValues(topic, status).Inc()
+		metrics.KafkaMessageDuration.WithLabelValues(topic).Observe(time.Since(start).Seconds())
+	}()
+
+	var event domain.TransactionEvent
+	if err := json.Unmarshal(record.Value, &event); err != nil {
+		c.logger.Error("unmarshal json failed", zap.Error(err))
+		status = "error"
+		return
+	}
+	if err := c.notification.Handle(ctx, event, topic); err != nil {
+		c.logger.Error("notification send failed", zap.Error(err), zap.String("topic", topic), zap.String("transaction_id", event.TransactionID.String()))
+		status = "error"
+		return
 	}
 }

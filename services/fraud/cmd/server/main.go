@@ -4,15 +4,18 @@ import (
 	"context"
 	"fmt"
 	"ledgerflow/pkg/logger"
+	"ledgerflow/pkg/metrics"
 	"ledgerflow/services/fraud/internal/app"
 	kafkaconsumer "ledgerflow/services/fraud/internal/infra/kafka"
 	rds "ledgerflow/services/fraud/internal/infra/redis"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	redis "github.com/redis/go-redis/v9"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"go.uber.org/zap"
@@ -32,6 +35,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "init logger: %v\n", err)
 		os.Exit(1)
 	}
+
+	metrics.Register()
 
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: redisAddr,
@@ -57,6 +62,14 @@ func main() {
 	velocityChecker := rds.NewVelocityChecker(redisClient, 60*time.Second, 5)
 	fraudChecker := app.NewFraudChecker(velocityChecker, producerClient)
 	consumer := kafkaconsumer.NewConsumer(consumerClient, fraudChecker, logger)
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		mux := http.NewServeMux()
+		mux.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":9090", mux)
+	}()
 
 	wg.Add(1)
 	go func() {

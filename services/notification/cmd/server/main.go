@@ -4,14 +4,17 @@ import (
 	"context"
 	"fmt"
 	"ledgerflow/pkg/logger"
+	"ledgerflow/pkg/metrics"
 	"ledgerflow/services/notification/internal/app"
 	"ledgerflow/services/notification/internal/infra/kafka"
 	"ledgerflow/services/notification/internal/infra/notify"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"go.uber.org/zap"
 )
@@ -28,6 +31,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	metrics.Register()
+
 	consumerClient, err := kgo.NewClient(
 		kgo.SeedBrokers(kafkaBrokers),
 		kgo.ConsumeTopics("transaction.completed", "transaction.failed"),
@@ -42,6 +47,14 @@ func main() {
 	consumer := kafka.NewConsumer(consumerClient, notificationService, logger)
 
 	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		mux := http.NewServeMux()
+		mux.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":9090", mux)
+	}()
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

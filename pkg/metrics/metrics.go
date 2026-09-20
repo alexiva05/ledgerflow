@@ -8,8 +8,8 @@ var HTTPRequestsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
 }, []string{"method", "path", "status"})
 
 var HTTPRequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-	Name: "http_request_duration_seconds",
-	Help: "HTTP request duration in seconds",
+	Name:    "http_request_duration_seconds",
+	Help:    "HTTP request duration in seconds",
 	Buckets: prometheus.DefBuckets,
 }, []string{"method", "path", "status"})
 
@@ -19,11 +19,22 @@ var KafkaMessagesTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
 }, []string{"topic", "status"})
 
 var KafkaMessageDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-	Name: "kafka_message_duration_seconds",
-	Help: "Kafka message duration in seconds",
+	Name:    "kafka_message_duration_seconds",
+	Help:    "Kafka message duration in seconds",
 	Buckets: prometheus.DefBuckets,
 }, []string{"topic"})
 
+var GRPCRequestsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+	Name: "grpc_requests_total",
+	Help: "Total gRPC requests",
+}, []string{"method", "code"})
+
+var GRPCRequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+	Name:    "grpc_request_duration_seconds",
+	Help:    "gRPC request duration in seconds",
+	Buckets: prometheus.DefBuckets,
+}, []string{"method"})
+
 func Register() {
-	prometheus.MustRegister(HTTPRequestsTotal, HTTPRequestDuration, KafkaMessagesTotal, KafkaMessageDuration)
+	prometheus.MustRegister(HTTPRequestsTotal, HTTPRequestDuration, KafkaMessagesTotal, KafkaMessageDuration, GRPCRequestsTotal, GRPCRequestDuration)
 }

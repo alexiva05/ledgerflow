@@ -12,7 +12,7 @@ func PrometheusMiddleware() gin.HandlerFunc {
 		start := time.Now()
 		c.Next()
 		duration := time.Since(start).Seconds()
-		HTTPRequestsTotal.WithLabelValues(c.Request.Method, c.FullPath(),strconv.Itoa(c.Writer.Status())).Inc()
-		HTTPRequestDuration.WithLabelValues(c.Request.Method, c.FullPath(),strconv.Itoa(c.Writer.Status())).Observe(duration)
+		HTTPRequestsTotal.WithLabelValues(c.Request.Method, c.FullPath(), strconv.Itoa(c.Writer.Status())).Inc()
+		HTTPRequestDuration.WithLabelValues(c.Request.Method, c.FullPath(), strconv.Itoa(c.Writer.Status())).Observe(duration)
 	}
 }
